@@ -1,0 +1,43 @@
+# Complete the 'create_sale_summary_report' function below.
+
+# @param df_data Data frame data from 'csv' file
+# @return Data frame with final output
+
+create_sale_summary_report <- function(df_data) {
+
+  # Process data  
+    library(dplyr)
+  
+  # Group the data by region and representative, calculate the total sales for each representative
+  df_summary <- df_data %>%
+    group_by(Region, Representative) %>%
+    summarise(Total_sales = sum(Total_sales)) %>%
+    arrange(Region, desc(Total_sales)) %>%
+    slice(1)
+  
+  # Rename the columns
+  colnames(df_summary) <- c("Region", "Representative", "Total_sales")
+  
+  # Return the summary data frame
+  return(df_summary)
+  # Return result
+}
+
+# DO NOT CHANGE THIS CODE
+
+# Open connection
+fptr <- file(Sys.getenv("OUTPUT_PATH"))
+open(fptr, open = "w")
+
+# Read input 'csv' file
+df_input <- read.csv("/dev/stdin", stringsAsFactors = FALSE)
+
+# Process result data set
+df_output <- create_sale_summary_report(df_input)
+
+# Save results as 'csv' file 
+write.csv(df_output, fptr, row.names = FALSE)
+
+# Close connection
+close(fptr)
+
